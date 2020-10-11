@@ -1,0 +1,25 @@
+{
+  "name": "employee-manaagement-system",
+  "version": "1.0.0",
+  "description": "This is an employee management system that uses mysql and node to enter, read, and edit employees arcross departments. ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jjbidwell/employee-manaagement-system.git"
+  },
+  "author": "Joshua Bidwell",
+  "license": "Mozilla Publi License 2.0",
+  "bugs": {
+    "url": "https://github.com/jjbidwell/employee-manaagement-system/issues"
+  },
+  "homepage": "https://github.com/jjbidwell/employee-manaagement-system#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}
