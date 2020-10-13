@@ -19,13 +19,22 @@ const connection = mysql.createConnection({
     begin();
   });
 
-  const allQuery = `SELECT e.id, e.first_name AS 'First Name', e.last_name AS 'Last Name', r.title AS 'JOB', d.name AS 'Department', e.manager_id AS 'Manager' 
+  const allQuery = `SELECT e.id, e.first_name AS 'First Name', e.last_name AS 'Last Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
   FROM employees AS e
   INNER JOIN roles AS r
   ON e.role_id = r.id
   INNER JOIN departments AS d
   ON d.id = r.department_id
   ORDER BY e.id;`;
+
+  const deptQuery = `SELECT e.id, e.first_name AS 'First Name', e.last_name AS 'Last Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
+  FROM employees AS e
+  INNER JOIN roles AS r
+  ON e.role_id = r.id
+  INNER JOIN departments AS d
+  ON d.id = r.department_id
+  WHERE d.name = ? 
+  ORDER BY e.id;`
 
   function begin(){
     inquirer
@@ -76,11 +85,35 @@ const connection = mysql.createConnection({
         throw err;
       }
       console.table(res);
-
+      begin();
     });
   }
-  function viewByDepartment(){
 
+  function viewByDepartment(){
+    inquirer 
+      .prompt([
+        {
+          type: "list",
+          message: 'What department would you like to see the employees from?',
+          name: 'department',
+          choices: [
+            'Executive',
+            'Sales',
+            'Legal',
+            'Engineering',
+            'Accounting',
+            'Human Resources'
+          ]
+        },
+      ]).then(response => {
+        connection.query(deptQuery, response.department, (err, res) => {
+          if (err) {
+            throw err;
+          }
+          console.table(res);
+          begin();
+        });
+      })
   }
   function viewByManager(){
 
