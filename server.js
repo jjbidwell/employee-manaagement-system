@@ -2,6 +2,8 @@ const mysql = require('mysql');
 const inquirer = require('inquirer');
 require('console.table');
 
+let employeeArray = [];
+
 const connection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
@@ -14,15 +16,25 @@ const connection = mysql.createConnection({
       console.error('error connecting: ' + err.stack);
       return;
     }
-   
+
     console.log('connected as id ' + connection.threadId);
+    populateArray();
     begin();
   });
 
+function populateArray(){
+  employeeArray = [];
+  connection.query('SELECT first_name, last_name FROM employees ORDER BY last_name;', (err, res) => {
+    if (err) {
+      throw err;
+    }
+      res.forEach(element => {
+        employeeArray.push(element.last_name + ", " + element.first_name);
+      });
+    });
+  };
 
-  let employeeArray = [];
-
-  const allQuery = `SELECT e.id, e.first_name AS 'First Name', e.last_name AS 'Last Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
+  const allQuery = `SELECT e.id, e.last_name AS 'Last Name', e.first_name AS 'First Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
   FROM employees AS e
   INNER JOIN roles AS r
   ON e.role_id = r.id
@@ -30,7 +42,7 @@ const connection = mysql.createConnection({
   ON d.id = r.department_id
   ORDER BY e.last_name;`;
 
-  const deptQuery = `SELECT e.id, e.first_name AS 'First Name', e.last_name AS 'Last Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
+  const deptQuery = `SELECT e.id, e.last_name AS 'Last Name', e.first_name AS 'First Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
   FROM employees AS e
   INNER JOIN roles AS r
   ON e.role_id = r.id
@@ -49,7 +61,7 @@ const connection = mysql.createConnection({
   VALUES(?, ?, ?, ?);`
 
   const deleteQuery = `DELETE FROM employees WHERE first_name = ? AND last_name = ?;`
-
+//DONE
   function begin(){
     inquirer
       .prompt([
@@ -128,11 +140,12 @@ const connection = mysql.createConnection({
         });
       })
   }
+
   function viewByManager(){
 
   }
 
-  //DONE
+//DONE
   function addEmployee(){
     inquirer
       .prompt([
@@ -226,20 +239,14 @@ const connection = mysql.createConnection({
             throw err;
           }
           console.log('Employee Added!');
+          populateArray();
           begin();
         });
 
       })
   }
   function removeEmployee(){
-    connection.query('SELECT first_name, last_name FROM employees ORDER BY last_name;', (err, res) => {
-      if (err) {
-        throw err;
-      }
-        res.forEach(element => {
-          employeeArray.push(element.last_name + ", " + element.first_name);
-        });
-        inquirer
+      inquirer
         .prompt([
           {
             type: 'list',
@@ -262,11 +269,12 @@ const connection = mysql.createConnection({
                 throw err;
               }         
               console.log(`${nameArray[1]} ${nameArray[0]} has been deleted from the database.`);
+              populateArray();
               begin();
             });
           };
         });
-    });
+
     
   }
 
