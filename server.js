@@ -36,6 +36,12 @@ const connection = mysql.createConnection({
   WHERE d.name = ? 
   ORDER BY e.id;`
 
+  const rollQuery = `SELECT r.title AS 'Role', r.salary AS 'Salary', d.name AS 'Department'
+  FROM roles AS r
+  INNER JOIN departments as d
+  ON r.department_id = d.id
+  ORDER BY r.id;`
+  
   function begin(){
     inquirer
       .prompt([
@@ -131,5 +137,11 @@ const connection = mysql.createConnection({
 
   }
   function viewRoles(){
-
+    connection.query(rollQuery, (err, res) => {
+      if (err) {
+        throw err;
+      }
+      console.table(res);
+      begin();
+    });
   }
