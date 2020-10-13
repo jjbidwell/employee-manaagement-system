@@ -5,6 +5,7 @@ require('console.table');
 let roleID;
 let managerID = null;
 let employeeArray = [];
+let managerArray = [];
 let roleArray = ['Executive', 'Sales Manager', 'Sales Lead', 'Salesperson', 'Engineering Manager', 'Engineering Lead', 'Engineer', 'Head Lawyer', 'Lawyer', 'Head Accountant', 'Accountant', 'Human Resource Manager', 'Human Resource Agent'];
 
 const connection = mysql.createConnection({
@@ -21,6 +22,7 @@ const connection = mysql.createConnection({
     }
     console.log('connected as id ' + connection.threadId);
     populateArray();
+    populateManagerArray();
     begin();
   });
 
@@ -33,7 +35,7 @@ const connection = mysql.createConnection({
   ON d.id = r.department_id
   ORDER BY e.last_name;`;
 
-  const deptQuery = `SELECT e.id, e.last_name AS 'Last Name', e.first_name AS 'First Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
+  const deptQuery = `SELECT e.id, e.last_name AS 'Last Name', e.first_name AS 'First Name', r.title AS 'Job'
   FROM employees AS e
   INNER JOIN roles AS r
   ON e.role_id = r.id
@@ -109,14 +111,30 @@ const connection = mysql.createConnection({
         });
       });
     };
+
+  function populateManagerArray(){
+    managerArray = [];
+    connection.query('SELECT first_name, last_name FROM employees WHERE manager_id IS NULL ORDER BY last_name;', (err, res) => {
+      if (err) {
+        throw err;
+      }
+        res.forEach(element => {
+          managerArray.push(element.last_name + ", " + element.first_name);
+        });
+      });
+
+  }
+  
   
 function chooseRole(x){
   switch(x) {
     case 'Executive':
       roleID = 1;
+      managerID = 0;
       break;
     case 'Sales Manager':
       roleID = 2;
+      managerID = 0;
       break;
     case "Sales Lead":
       roleID = 3;
@@ -128,6 +146,7 @@ function chooseRole(x){
       break;
     case 'Engineering Manager':
       roleID = 5;
+      managerID = 0;
       break;
     case "Engineering Lead":
       roleID = 6;
@@ -139,6 +158,7 @@ function chooseRole(x){
       break;
     case 'Head Lawyer':
       roleID = 8;
+      managerID = 0;
       break;
    case "Lawyer":
       roleID = 9;
@@ -146,6 +166,7 @@ function chooseRole(x){
       break;
   case 'Head Accountant':
       roleID = 10;
+      managerID = 0;
       break;
   case 'Accountant':
       roleID = 11;
@@ -153,6 +174,7 @@ function chooseRole(x){
       break;
   case "Human Resources Manager":
       roleID = 12;
+      managerID = 0;
       break;
   case "Human Resources Agent":
       roleID = 13;
@@ -236,6 +258,7 @@ function chooseRole(x){
           }
           console.log(`${firstName} ${lastName} Added!`);
           populateArray();
+          populateManagerArray();
           begin();
         });
 
@@ -266,6 +289,7 @@ function chooseRole(x){
               }         
               console.log(`${nameArray[1]} ${nameArray[0]} has been deleted from the database.`);
               populateArray();
+              populateManagerArray();
               begin();
             });
           };
@@ -274,6 +298,7 @@ function chooseRole(x){
     
   }
 
+  //DONE
   function updateRole(){
     inquirer 
       .prompt([
@@ -299,6 +324,7 @@ function chooseRole(x){
           }
           console.log(`${nameArray[1]} ${nameArray[0]} Updated!`);
           populateArray();
+          populateManagerArray();
           begin();
         });
       })
