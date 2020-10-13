@@ -76,7 +76,13 @@ const connection = mysql.createConnection({
 
 
   function viewEmployees(){
+    connection.query("SELECT * FROM employees", (err, res) => {
+      if (err) {
+        throw err;
+      }
+      console.log(res);
 
+    });
   }
   function viewByDepartment(){
 
