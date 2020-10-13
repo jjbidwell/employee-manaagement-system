@@ -41,7 +41,7 @@ const connection = mysql.createConnection({
   INNER JOIN departments as d
   ON r.department_id = d.id
   ORDER BY r.id;`
-  
+
   function begin(){
     inquirer
       .prompt([
@@ -125,7 +125,43 @@ const connection = mysql.createConnection({
 
   }
   function addEmployee(){
+    inquirer
+      .prompt([
+        {
+          type: 'list',
+          message: "What will be the new employee's job?",
+          name: 'role',
+          choices: [
+            'Executive',
+            'Sales Manager',
+            'Sales Lead',
+            'Salesperson',
+            'Engineering Manager',
+            'Engineering Lead',
+            'Engineer',
+            'Head Lawyer',
+            'Lawyer',
+            'Head Accountant',
+            'Accountant',
+            'Human Resource Manager',
+            'Human Resource Agent'
+          ]
+        },
+        {
+          type: "input",
+          message: "What is the employee's first name?",
+          name: "first"
+        },
+        {
+          type: "input",
+          message: "What is the employee's last name?",
+          name: "last"
+        }
+      ]).then(response => {
+        
+        console.log(employee);
 
+      })
   }
   function removeEmployee(){
 
