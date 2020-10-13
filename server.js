@@ -42,6 +42,9 @@ const connection = mysql.createConnection({
   ON r.department_id = d.id
   ORDER BY r.id;`
 
+  const addQuery = `INSERT INTO employees(first_name, last_name, role_id, manager_id)
+  VALUES(?, ?, ?, ?);`
+
   function begin(){
     inquirer
       .prompt([
@@ -158,8 +161,68 @@ const connection = mysql.createConnection({
           name: "last"
         }
       ]).then(response => {
-        
-        console.log(employee);
+        //let role = response.role;
+        let roleID;
+        let firstName = response.first;
+        let lastName = response.last;
+        let managerID = null;
+
+        switch(response.role) {
+          case 'Executive':
+            roleID = 1;
+            break;
+          case 'Sales Manager':
+            roleID = 2;
+            break;
+          case "Sales Lead":
+            roleID = 3;
+            managerID = 2;
+            break;
+          case 'Salesperson':
+            roleID = 4;
+            managerID = 2;
+            break;
+          case 'Engineering Manager':
+            roleID = 5;
+            break;
+          case "Engineering Lead":
+            roleID = 6;
+            managerID = 3;
+            break;
+          case 'Engineer':
+            roleID = 7;
+            managerID = 3;
+            break;
+          case 'Head Lawyer':
+            roleID = 8;
+            break;
+         case "Lawyer":
+            roleID = 9;
+            managerID = 4;
+            break;
+        case 'Head Accountant':
+            roleID = 10;
+            break;
+        case 'Accountant':
+            roleID = 11;
+            managerID = 5
+            break;
+        case "Human Resources Manager":
+            roleID = 12;
+            break;
+        case "Human Resources Agent":
+            roleID = 13;
+            managerID = 6
+            break;
+        }
+        console.log(firstName + " " + lastName);
+        connection.query(addQuery, [firstName, lastName, roleID, managerID], (err, res) => {
+          if (err) {
+            throw err;
+          }
+          console.log('Employee Added!');
+          begin();
+        });
 
       })
   }
