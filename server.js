@@ -19,13 +19,16 @@ const connection = mysql.createConnection({
     begin();
   });
 
+
+  let employeeArray = [];
+
   const allQuery = `SELECT e.id, e.first_name AS 'First Name', e.last_name AS 'Last Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
   FROM employees AS e
   INNER JOIN roles AS r
   ON e.role_id = r.id
   INNER JOIN departments AS d
   ON d.id = r.department_id
-  ORDER BY e.id;`;
+  ORDER BY e.last_name;`;
 
   const deptQuery = `SELECT e.id, e.first_name AS 'First Name', e.last_name AS 'Last Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
   FROM employees AS e
@@ -44,6 +47,8 @@ const connection = mysql.createConnection({
 
   const addQuery = `INSERT INTO employees(first_name, last_name, role_id, manager_id)
   VALUES(?, ?, ?, ?);`
+
+  const deleteQuery = `DELETE FROM employees WHERE first_name = ? AND last_name = ?;`
 
   function begin(){
     inquirer
@@ -64,7 +69,6 @@ const connection = mysql.createConnection({
           ]
         }
       ]).then(answers => {
-        console.log(answers.choice);
         switch (answers.choice){
           case 'View all employees':
             return viewEmployees();
@@ -87,7 +91,7 @@ const connection = mysql.createConnection({
       });
   };
 
-
+//DONE
   function viewEmployees(){
     connection.query(allQuery, (err, res) => {
       if (err) {
@@ -97,7 +101,7 @@ const connection = mysql.createConnection({
       begin();
     });
   }
-
+//DONE
   function viewByDepartment(){
     inquirer 
       .prompt([
@@ -127,6 +131,8 @@ const connection = mysql.createConnection({
   function viewByManager(){
 
   }
+
+  //DONE
   function addEmployee(){
     inquirer
       .prompt([
@@ -215,7 +221,6 @@ const connection = mysql.createConnection({
             managerID = 6
             break;
         }
-        console.log(firstName + " " + lastName);
         connection.query(addQuery, [firstName, lastName, roleID, managerID], (err, res) => {
           if (err) {
             throw err;
@@ -227,14 +232,51 @@ const connection = mysql.createConnection({
       })
   }
   function removeEmployee(){
-
+    connection.query('SELECT first_name, last_name FROM employees ORDER BY last_name;', (err, res) => {
+      if (err) {
+        throw err;
+      }
+        res.forEach(element => {
+          employeeArray.push(element.last_name + ", " + element.first_name);
+        });
+        inquirer
+        .prompt([
+          {
+            type: 'list',
+            message: 'Please select the employee you would like to delete',
+            name: 'removeName',
+            choices: employeeArray
+          },
+          {
+            type: 'confirm',
+            message: 'Are you sure you want to permanently delete this employee?',
+            name: 'confirm'
+          }
+        ]).then(response => {
+          if(response.confirm === true){
+            let nameArray = response.removeName.split(', ');;
+            let first;
+            let last;
+            connection.query(deleteQuery, [nameArray[1], nameArray[0]], (err, res) => {
+              if (err) {
+                throw err;
+              }         
+              console.log(`${nameArray[1]} ${nameArray[0]} has been deleted from the database.`);
+              begin();
+            });
+          };
+        });
+    });
+    
   }
+
   function updateRole(){
 
   }
   function updateManager(){
 
   }
+  //DONE
   function viewRoles(){
     connection.query(rollQuery, (err, res) => {
       if (err) {
