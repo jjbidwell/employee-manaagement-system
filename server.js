@@ -21,14 +21,16 @@ const connection = mysql.createConnection({
       return;
     }
     console.log('connected as id ' + connection.threadId);
+    console.log(ascii);
     populateArray();
     populateManagerArray();
     begin();
   });
 
 
-  const allQuery = `SELECT e.id, e.last_name AS 'Last Name', e.first_name AS 'First Name', r.title AS 'Job', d.name AS 'Department', e.manager_id AS 'Manager' 
-  FROM employees AS e
+  const allQuery = `SELECT e.id, e.last_name AS 'Last Name', e.first_name AS 'First Name', r.title AS Role, d.name AS Department, CONCAT(managers.first_name, " ", managers.last_name) AS Manager FROM employees AS e
+  LEFT JOIN employees AS managers 
+  ON e.manager_id = managers.id
   INNER JOIN roles AS r
   ON e.role_id = r.id
   INNER JOIN departments AS d
@@ -58,6 +60,18 @@ const connection = mysql.createConnection({
   WHERE first_name = ? AND last_name = ?;`
 
   const deleteQuery = `DELETE FROM employees WHERE first_name = ? AND last_name = ?;`
+
+  const ascii = `
+      ::::::::::   :::   :::   :::::::::  :::        ::::::::  :::   ::: :::::::::: ::::::::::          ::::::::  :::::::::: ::::    ::: :::::::::: :::::::::      ::: ::::::::::: ::::::::  ::::::::: 
+     :+:         :+:+: :+:+:  :+:    :+: :+:       :+:    :+: :+:   :+: :+:        :+:                :+:    :+: :+:        :+:+:   :+: :+:        :+:    :+:   :+: :+:   :+:    :+:    :+: :+:    :+: 
+    +:+        +:+ +:+:+ +:+ +:+    +:+ +:+       +:+    +:+  +:+ +:+  +:+        +:+                +:+        +:+        :+:+:+  +:+ +:+        +:+    +:+  +:+   +:+  +:+    +:+    +:+ +:+    +:+  
+   +#++:++#   +#+  +:+  +#+ +#++:++#+  +#+       +#+    +:+   +#++:   +#++:++#   +#++:++#           :#:        +#++:++#   +#+ +:+ +#+ +#++:++#   +#++:++#:  +#++:++#++: +#+    +#+    +:+ +#++:++#:    
+  +#+        +#+       +#+ +#+        +#+       +#+    +#+    +#+    +#+        +#+                +#+   +#+# +#+        +#+  +#+#+# +#+        +#+    +#+ +#+     +#+ +#+    +#+    +#+ +#+    +#+    
+ #+#        #+#       #+# #+#        #+#       #+#    #+#    #+#    #+#        #+#                #+#    #+# #+#        #+#   #+#+# #+#        #+#    #+# #+#     #+# #+#    #+#    #+# #+#    #+#     
+########## ###       ### ###        ########## ########     ###    ########## ##########          ########  ########## ###    #### ########## ###    ### ###     ### ###     ########  ###    ###              
+ `
+
+
 //DONE
   function begin(){
     inquirer
