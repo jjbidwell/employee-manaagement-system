@@ -80,7 +80,7 @@ const connection = mysql.createConnection({
       if (err) {
         throw err;
       }
-      console.log(res);
+      console.table(res);
 
     });
   }
