@@ -32,7 +32,7 @@ CREATE TABLE employees (
 );
 
 INSERT INTO departments(name)
-VALUES('Executive'),
+VALUES
 ('Sales'),
 ('Engineering'),
 ('Legal'),

@@ -1,13 +1,12 @@
-Executive,250000,1
-Sales Manager,150000,2
-Sales Lead,100000,2
-Salesperson,75000,2
-Engineering Manager,175000,3
-Engineering Lead,150000,3
-Engineer,100000,3
-Head Lawyer,200000,4
-Lawyer,175000,4
-Head Accountant,175000,5
-Accountant,125000,5
-Human Resource Manager,100000,6
-Human Resource Agent,75000,6
+Sales Manager,150000,1
+Sales Lead,100000,1
+Salesperson,75000,1
+Engineering Manager,175000,2
+Engineering Lead,150000,2
+Engineer,100000,2
+Head Lawyer,200000,3
+Lawyer,175000,3
+Head Accountant,175000,4
+Accountant,125000,4
+Human Resource Manager,100000,5
+Human Resource Agent,75000,5
