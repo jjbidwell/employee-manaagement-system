@@ -28,16 +28,16 @@ const connection = mysql.createConnection({
   });
 
 
-  const allQuery = `SELECT employees.id, employees.last_name AS 'Last Name', employees.first_name AS 'First Name', r.title AS Role, d.id, d.name AS Department, CONCAT(managers.first_name, " ", managers.last_name) AS Manager FROM employees
+  const allQuery = `SELECT e.id, e.last_name AS 'Last Name', e.first_name AS 'First Name', r.title AS Role, d.name AS Department, CONCAT(managers.first_name, " ", managers.last_name) AS Manager FROM employees AS e
   LEFT JOIN employees AS managers 
-  ON employees.manager_id = managers.id
+  ON e.manager_id = managers.id
   INNER JOIN roles AS r
-  ON employees.role_id = r.id
+  ON e.role_id = r.id
   INNER JOIN departments AS d
   ON d.id = r.department_id
-  ORDER BY employees.last_name;`;
+  ORDER BY e.last_name;`;
 
-  const managerQuery = `SELECT e.id, e.last_name AS 'Last Name', e.first_name AS 'First Name', r.title AS Role, d.id, d.name AS Department FROM employees AS e
+  const managerQuery = `SELECT e.id, e.last_name AS 'Last Name', e.first_name AS 'First Name', r.title AS Role, d.name AS Department FROM employees AS e
   LEFT JOIN employees AS managers 
   ON e.manager_id = managers.id
   INNER JOIN roles AS r
