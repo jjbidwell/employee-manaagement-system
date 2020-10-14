@@ -430,6 +430,9 @@ const connection = mysql.createConnection({
   SET role_id = ?, manager_id = ?
   WHERE first_name = ? AND last_name = ?;`
 
+  const updateManagerQuery = `UPDATE employees
+  SET manager_id = ? WHERE first_name = ? AND last_name = ?;`
+
   const deleteQuery = `DELETE FROM employees WHERE first_name = ? AND last_name = ?;`
 
   const ascii = `
@@ -563,6 +566,8 @@ function chooseRole(x){
       break;
   }
 }
+
+
 //DONE
   function viewEmployees(){
     connection.query(allQuery, (err, res) => {
@@ -599,7 +604,7 @@ function chooseRole(x){
         });
       })
   }
-
+//DONE
   function viewByManager(){
     inquirer
       .prompt([
@@ -730,8 +735,42 @@ function chooseRole(x){
 
 
   function updateManager(){
+    inquirer 
+    .prompt([
+      {
+        type: 'list',
+        message: 'What employee would you like to update?',
+        name: 'changeManager',
+        choices: employeeArray
+      },
+      {
+        type: 'list',
+        message: 'What manager would you like to switch them to?',
+        name: 'manager',
+        choices: managerArray
+      }
+    ]).then(response => {
+      //console.log(response);
+      let nameArray = response.manager.split(', ');
+      connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS "manager", id FROM employees WHERE first_name = ? AND last_name = ?', [nameArray[1], nameArray[0]], (err, res) => {        
+        managerID = res[0].id
+        let secondNameArray = response.changeManager.split(', '); 
+        connection.query(updateManagerQuery, [managerID, secondNameArray[1], secondNameArray[0]], (err, res) => {
+          if (err) {
+            throw err;
+          }
+          console.log(`${nameArray[1]} ${nameArray[0]}'s manager updated!`);
+          populateArray();
+          populateManagerArray();
+          begin();
+        });
+      })
 
+  
+
+    })
   }
+
   //DONE
   function viewRoles(){
     connection.query(rollQuery, (err, res) => {
